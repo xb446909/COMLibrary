@@ -9,7 +9,7 @@
 
 #include "resource.h"		// main symbols
 
-
+#define ExportC extern "C" __declspec(dllexport)
 // CCOMLibraryApp
 // See COMLibrary.cpp for the implementation of this class
 //
