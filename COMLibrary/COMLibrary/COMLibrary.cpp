@@ -38,12 +38,14 @@
 BEGIN_MESSAGE_MAP(CCOMLibraryApp, CWinApp)
 END_MESSAGE_MAP()
 
+#define BUFFER_SIZE		(1024 * 1024 * 1024)
+
 DWORD WINAPI ReciveProc(LPVOID lpParameter);
 
 HANDLE hCOM;
 HANDLE hThread;
 
-BYTE g_buffer[1024 * 1024 * 1024];
+BYTE g_buffer[BUFFER_SIZE];
 DWORD g_size;
 
 
@@ -96,6 +98,9 @@ ExportC BOOL OpenCOM(LPCSTR com, DWORD baudrate, UCHAR bytesize, UCHAR parity, U
 	SetCommTimeouts(hCOM, &TimeOuts);
 	SetCommState(hCOM, &dcb);
 	PurgeComm(hCOM, PURGE_TXCLEAR | PURGE_RXCLEAR);
+
+	hThread = CreateThread(NULL, 0, ReciveProc, NULL, 0, NULL);
+
 	return TRUE;
 	// normal function body here
 }
@@ -103,6 +108,7 @@ ExportC BOOL OpenCOM(LPCSTR com, DWORD baudrate, UCHAR bytesize, UCHAR parity, U
 DWORD WINAPI ReciveProc(LPVOID lpParameter)
 {
 	g_size = 0;
+	char recv_buf[1024] = {0};
 
 	while (1)
 	{
@@ -114,10 +120,27 @@ DWORD WINAPI ReciveProc(LPVOID lpParameter)
 		}
 		if (bReadStatus)
 		{
-			EditBoxAppendText(hEditBox, CA2W(recv_buf));
+			if (g_size + dwReadSize < BUFFER_SIZE)
+			{
+				memcpy(&g_buffer[g_size], recv_buf, dwReadSize);
+				g_size += dwReadSize;
+				memset(recv_buf, 0, 1024);
+			}
 			bReadStatus = FALSE;
 		}
 
 	}
 	return 0;
+}
+
+ExportC void ReadData(char* str, int &len)
+{
+	DWORD ExitCode;
+	GetExitCodeThread(hThread, &ExitCode);
+	TerminateThread(hThread, ExitCode);
+	CloseHandle(hThread);
+	CloseHandle(hCOM);
+
+	memcpy(str, g_buffer, g_size);
+	len = g_size;
 }

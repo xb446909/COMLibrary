@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "COMLibrary", "COMLibrary\COMLibrary.vcxproj", "{35E80821-E2FF-444F-82C7-492EAC74FD51}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "COMLibraryTest", "COMLibraryTest\COMLibraryTest.vcxproj", "{C4A06AE9-8730-40BA-9BAC-85EB6498C450}"
+	ProjectSection(ProjectDependencies) = postProject
+		{35E80821-E2FF-444F-82C7-492EAC74FD51} = {35E80821-E2FF-444F-82C7-492EAC74FD51}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

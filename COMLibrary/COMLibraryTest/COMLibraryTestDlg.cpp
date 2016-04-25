@@ -6,6 +6,13 @@
 #include "COMLibraryTest.h"
 #include "COMLibraryTestDlg.h"
 #include "afxdialogex.h"
+#include "..\COMLibrary\COMLibrary.h"
+
+#ifdef _DEBUG
+#pragma comment(lib, "..\\Debug\\COMLibrary.lib")
+#else
+#pragma comment(lib, "..\\Release\\COMLibrary.lib")
+#endif
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -63,6 +70,8 @@ BEGIN_MESSAGE_MAP(CCOMLibraryTestDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_BN_CLICKED(IDC_BTN_OPEN, &CCOMLibraryTestDlg::OnBnClickedBtnOpen)
+	ON_BN_CLICKED(IDC_BTN_READ, &CCOMLibraryTestDlg::OnBnClickedBtnRead)
 END_MESSAGE_MAP()
 
 
@@ -151,3 +160,28 @@ HCURSOR CCOMLibraryTestDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+
+void CCOMLibraryTestDlg::OnBnClickedBtnOpen()
+{
+	// TODO: Add your control notification handler code here
+	if (!OpenCOM("COM1", 9600, 8, NOPARITY, ONESTOPBIT))
+	{
+		MessageBox(L"Open Error");
+	}
+}
+
+char str[1024 * 1024] = {0};
+
+
+void CCOMLibraryTestDlg::OnBnClickedBtnRead()
+{
+	// TODO: Add your control notification handler code here
+	int len = 0;
+	memset(str, 0, 1024 * 1024);
+	ReadData(str, len);
+	if (len > 0)
+	{
+		SetDlgItemText(IDC_EDIT_RECV, CA2W(str));
+	}
+}
