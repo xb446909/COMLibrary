@@ -28,8 +28,10 @@
 #define ONE5STOPBITS        1
 #define TWOSTOPBITS         2
 
-ExportC BOOL OpenCOM(LPCSTR com, DWORD baudrate, UCHAR bytesize, UCHAR parity, UCHAR stopbits);
-ExportC void ReadData(char* str, int &len);
+typedef int(*RecvCallback)(int, char*, DWORD);
+
+ExportC BOOL OpenCOM(int com, DWORD baudrate, UCHAR bytesize, UCHAR parity, UCHAR stopbits, RecvCallback pCallback);
+ExportC void CloseData(int nCom);
 
 class CCOMLibraryApp : public CWinApp
 {

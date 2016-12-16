@@ -32,4 +32,5 @@ protected:
 public:
 	afx_msg void OnBnClickedBtnOpen();
 	afx_msg void OnBnClickedBtnRead();
+	afx_msg void OnBnClickedButton1();
 };

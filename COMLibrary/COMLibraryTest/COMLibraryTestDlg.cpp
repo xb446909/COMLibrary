@@ -7,6 +7,7 @@
 #include "COMLibraryTestDlg.h"
 #include "afxdialogex.h"
 #include "..\COMLibrary\COMLibrary.h"
+#include "resource.h"
 
 #ifdef _DEBUG
 #pragma comment(lib, "..\\Debug\\COMLibrary.lib")
@@ -72,6 +73,7 @@ BEGIN_MESSAGE_MAP(CCOMLibraryTestDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BTN_OPEN, &CCOMLibraryTestDlg::OnBnClickedBtnOpen)
 	ON_BN_CLICKED(IDC_BTN_READ, &CCOMLibraryTestDlg::OnBnClickedBtnRead)
+	ON_BN_CLICKED(IDC_BUTTON1, &CCOMLibraryTestDlg::OnBnClickedButton1)
 END_MESSAGE_MAP()
 
 
@@ -160,12 +162,25 @@ HCURSOR CCOMLibraryTestDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-
+int RecvCallBack(int nType, char* pDataBuff, DWORD nRecvSize)
+{
+	CString strCom;
+	strCom.Format(L"COM%d receive data:\r\n%s", nType, CA2T(pDataBuff));
+	if (nRecvSize > 0)
+	{
+		SetDlgItemText(AfxGetApp()->m_pMainWnd->m_hWnd, IDC_EDIT_RECV, CT2W(strCom));
+	}
+	return 0;
+}
 
 void CCOMLibraryTestDlg::OnBnClickedBtnOpen()
 {
 	// TODO: Add your control notification handler code here
-	if (!OpenCOM("COM1", 9600, 8, NOPARITY, ONESTOPBIT))
+	int nCOM;
+	int nBaudRate;
+	nCOM = GetDlgItemInt(IDC_EDIT_COM);
+	nBaudRate = GetDlgItemInt(IDC_EDIT_BAUD_RATE);
+	if (!OpenCOM(nCOM, nBaudRate, 8, NOPARITY, ONESTOPBIT, RecvCallBack))
 	{
 		MessageBox(L"Open Error");
 	}
@@ -179,9 +194,21 @@ void CCOMLibraryTestDlg::OnBnClickedBtnRead()
 	// TODO: Add your control notification handler code here
 	int len = 0;
 	memset(str, 0, 1024 * 1024);
-	ReadData(str, len);
-	if (len > 0)
+	int nCom;
+	nCom = GetDlgItemInt(IDC_EDIT_COM);
+	CloseData(nCom);
+
+}
+
+
+void CCOMLibraryTestDlg::OnBnClickedButton1()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	int nCOM, nBaudRate;
+	nCOM = GetDlgItemInt(IDC_EDIT_COM);
+	nBaudRate = GetDlgItemInt(IDC_EDIT_BAUD_RATE);
+	if (!OpenCOM((nCOM + 2), nBaudRate, 8, NOPARITY, ONESTOPBIT, RecvCallBack))
 	{
-		SetDlgItemText(IDC_EDIT_RECV, CA2W(str));
+		MessageBox(L"Open Error");
 	}
 }
