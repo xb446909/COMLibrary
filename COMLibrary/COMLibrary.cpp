@@ -40,7 +40,7 @@ using namespace std;
 BEGIN_MESSAGE_MAP(CCOMLibraryApp, CWinApp)
 END_MESSAGE_MAP()
 
-#define BUFFER_SIZE		(1024 * 1024 * 1024)
+#define BUFFER_SIZE		(100 * 1024 * 1024)
 
 #define  UM_QUIT	(WM_USER + 1)
 
